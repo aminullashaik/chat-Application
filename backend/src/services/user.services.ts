@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { Users } from "../entities/User";
-import { userRepository } from "../repository/userRepository";
+import { userRepository } from "../repository/user.repository";
 
 export const userService = {
 

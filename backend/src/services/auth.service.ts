@@ -5,7 +5,7 @@ import {
     findUserByEmail,
     findUserById,
     userRepository
-} from "../repository/authRepository";
+} from "../repository/auth.repository";
 
 export const loginUser = async (email: string, password: string) => {
 
