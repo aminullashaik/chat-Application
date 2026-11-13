@@ -1,6 +1,5 @@
 import { useState } from "react";
 // Imports for shadcn/ui components
-import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 // Icons used for the bottom utility layout actions
 import { Plus, Compass, Settings, Bell, Grid } from "lucide-react";
