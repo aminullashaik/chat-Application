@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { signup } from "../controllers/userControllers";
-import { getAllUsers, getUserByEmail,getUserById,getUserByMobile,getUserByName,updateUser,deleteUser } from "../controllers/userControllers";
+import { signup } from "../controllers/user.controllers";
+import { getAllUsers, getUserByEmail,getUserById,getUserByMobile,getUserByName,updateUser,deleteUser } from "../controllers/user.controllers";
 
 const router = Router();
 

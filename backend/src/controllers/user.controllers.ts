@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userService } from "../services/userServices";
+import { userService } from "../services/user.services";
 export const signup= async(req: Request, res: Response) => {
     try {
         const {name, email, password, mobile} = req.body;
