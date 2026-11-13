@@ -17,7 +17,6 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME,
     synchronize: true,
     logging: true,
-    synchronize: true,
     entities: [ Users, Message, Conversation ]
 })
 
