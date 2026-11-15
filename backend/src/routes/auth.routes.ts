@@ -1,11 +1,12 @@
 import { Router } from "express";
 
-import { login } from "../controllers/auth.controller";
+import { login, changePassword } from "../controllers/auth.controller";
+import { authenticateToken } from "../middleware/auth.middleware";
 // import { verifyToken } from "../middlewares/authMiddleware";
 
 const router = Router()
 
 router.post('/login', login)
-// router.put('/auth/change-password', verifyToken, changePassword);
+router.put('/auth/change-password',authenticateToken , changePassword);
 
 export default router
