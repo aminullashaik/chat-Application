@@ -1,7 +1,11 @@
 import express, { Request, Response } from "express";
 import { AppDataSource } from "./dataSource";
+
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import conversationRoutes from './routes/conversation.routes';
+import messageRoutes from './routes/message.routes';
+
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
@@ -12,17 +16,17 @@ const PORT = 5000;
 
 const corsOptions = {
   origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 };
 
-// Middleware
 app.use(express.json());
 app.use(cors(corsOptions));
 
 // REST Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use('/api/conversations', messageRoutes)
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("Connected successfully");

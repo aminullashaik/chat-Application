@@ -4,23 +4,6 @@ import { Message } from "./Message";
 
 @Entity ("conversation")
 
-@Index(
-    "IDX_user1_id_unique_set",
-    ['userOneId'],
-    {
-        unique: true,
-        where: '"deletedAt" IS NULL'
-    }
-)
-
-@Index(
-    "IDX_user2_id_unique_set",
-    ['userTwoId'],
-    {
-        unique: true,
-        where: '"deletedAt" IS NULL'
-    }
-)
 
 export class Conversation {
     @PrimaryGeneratedColumn()

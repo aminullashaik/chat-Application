@@ -21,7 +21,7 @@ export const loginUser = async (email: string, password: string) => {
         throw new Error("Password is incorrect")
     }
 
-    const token = await jwt.sign(
+    const token =  jwt.sign(
         {id: existingUser.id, role: existingUser.role},
         "chat_app_2026",
         {

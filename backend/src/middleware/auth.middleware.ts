@@ -18,6 +18,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     if(!token){
         return res.status(403).json({message: "Access Denied: No token"});
     }
+
     try {
         const verifiedUser =jwt.verify(token, JWT_SECRET) as AuthUser;
         req.user =verifiedUser;
