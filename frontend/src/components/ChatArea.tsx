@@ -1,10 +1,11 @@
-import { sendMessage } from "@/store/slice/chat.slice";
+import { sendMessage, appendMessage } from "@/store/slice/chat.slice";
 import type { AppDispatch, RootState } from "@/store/store";
 import { MessageSquare, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ScrollArea } from "./ui/scroll-area";
-import { Button, Input } from "@base-ui/react";
+import { Button } from "@/components/ui/button";
+import {Input } from "@/components/ui/input";
 
 export default function ChatArea() {
     const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +34,15 @@ export default function ChatArea() {
 
         const trimmed = text.trim();
         if(!trimmed || !selectedUser) return;
+
+        // 1. local temporary message object
+     const newMsg = {
+        id: Date.now(),
+        content: trimmed,
+        senderId: Number(currentUser?.id),
+        createdAt: new Date().toISOString(),
+    };
+    dispatch(appendMessage(newMsg));
 
         dispatch(
             sendMessage({
@@ -80,7 +90,7 @@ export default function ChatArea() {
             </div>
 
             {/* Message Area */}
-            <ScrollArea>
+            <ScrollArea className="flex-1 p-4">
             {loadingMessages ? (
                 <div className="flex h-full items-center justify-center text-xs text-slate-400 py-20">
                 Loading messages...

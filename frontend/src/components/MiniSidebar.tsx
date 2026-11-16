@@ -3,21 +3,21 @@ import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 // Icons used for the bottom utility layout actions
 import { Plus, Compass, Settings, Bell, Grid } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 // Mock list of workspace channels
 const WORKSPACES = [
-    { id: "w1", name: "Acme Corporation", initials: "AC", color: "bg-indigo-600 text-white" },
-    { id: "w2", name: "Design System Hub", initials: "DS", color: "bg-emerald-600 text-white" },
-    { id: "w3", name: "Side Hustle Devs", initials: "SH", color: "bg-amber-500 text-slate-900" },
-    { id: "w4", name: "Marketing Team", initials: "MK", color: "bg-rose-500 text-white" },
+    { id: "w1", name: "DTE AGRITECH", initials: "DTE", color: "bg-indigo-600 text-white" },
 ];
 
 export default function WorkspaceSidebar() {
     const [activeWorkspace, setActiveWorkspace] = useState("w1");
+    const currentUser = useSelector((state: RootState) => state.auth.user);
 
     return (
         <TooltipProvider>
-            <div className="flex h-screen w-[68px] flex-col items-center justify-between border-r border-slate-200 bg-slate-900 py-3 dark:border-slate-800 dark:bg-slate-950">
+            <div className="flex h-full w-17 flex-col items-center justify-between border-r border-slate-200 bg-slate-900 py-3 dark:border-slate-800 dark:bg-slate-950">
 
                 {/* Top Section: Workspace Switching Group */}
                 <div className="flex w-full flex-col items-center gap-4">
@@ -33,7 +33,7 @@ export default function WorkspaceSidebar() {
                         </TooltipContent>
                     </Tooltip>
 
-                    <div className="h-[1px] w-8 bg-slate-800" />
+                    <div className="h-px w-8 bg-slate-800" />
 
                     {/* Active Workspaces Render Rack */}
                     <div className="flex w-full flex-col items-center gap-3">
@@ -51,7 +51,7 @@ export default function WorkspaceSidebar() {
                                     >
                                         {/* Active Indicator Bar on the left edge inside layout bounds */}
                                         {isActive && (
-                                            <div className="absolute -left-[14px] h-8 w-1 rounded-r-md bg-white" />
+                                            <div className="absolute -left-3.5 h-8 w-1 rounded-r-md bg-white" />
                                         )}
                                         {workspace.initials}
                                     </TooltipTrigger>
@@ -106,20 +106,17 @@ export default function WorkspaceSidebar() {
                         </TooltipContent>
                     </Tooltip>
 
-                    <div className="h-[1px] w-8 bg-slate-800 my-1" />
+                    <div className="h-px w-8 bg-slate-800 my-1" />
 
                     {/* Active Profile Avatar Node */}
                     <Tooltip>
                         <TooltipTrigger className="relative h-9 w-9 shrink-0 rounded-xl bg-slate-700 font-medium text-xs text-white shadow ring-slate-900 transition-transform active:scale-95 hover:scale-105 focus-visible:outline-none">
-                            <img
-                                src="https://unsplash.com"
-                                alt="Profile"
-                                className="h-full w-full rounded-xl object-cover"
-                            />
-                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-slate-900 bg-emerald-500" />
+                           <div className="h-full w-full rounded-full bg-indigo-600 flex items-center justify-center text-xs font-semibold text-white">
+                        {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+                    </div>
                         </TooltipTrigger>
                         <TooltipContent side="right">
-                            <p className="text-xs font-semibold">Jane Doe (You)</p>
+                            <p className="text-xs font-semibold">{currentUser.name} (You)</p>
                         </TooltipContent>
                     </Tooltip>
                 </div>

@@ -23,7 +23,7 @@ export const loginUser = async (email: string, password: string) => {
 
     const token = await jwt.sign(
         {id: existingUser.id, role: existingUser.role},
-        "my_secreatkey_2026",
+        "chat_app_2026",
         {
             expiresIn : '1d'
         }
