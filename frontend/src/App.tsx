@@ -7,7 +7,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Signup from "./pages/signup";
 import LoginPage from "./pages/login";
 import HomePage from "./pages/homePage";
-import { UserPage } from "./pages/user.page";
+import { UserPage } from "./pages/UserPage";
 
 const App: React.FC = () => {
   return (

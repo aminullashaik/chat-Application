@@ -1,8 +1,8 @@
 export interface Message {
     id: number;
     content: string;
-    sendId: number;
-    conversatioId: number;
+    senderId: number;
+    conversationId: number;
     createdAt: string;
     updatedAt?: string;
     status?: "sending" | "sent" | "failed";
@@ -15,7 +15,7 @@ export interface ChatUser {
     email: string;
     mobile?: string;
     role?: string;
-    status?: "Online" | "Ofline";
+    status?: "Online" | "Offline";
     avatarUrl?: string;
 }
 
