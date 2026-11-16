@@ -19,7 +19,7 @@ export class Message {
         }
     )
     @JoinColumn({name: "conversationId"})
-    conversation!: Conversation[]
+    conversation!: Conversation
 
     @ManyToOne(
         () => Users,

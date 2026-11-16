@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
-const JWT_SECRET = "aminulla_serect_1805";
+const JWT_SECRET = "chat_app_2026";
 
 export interface AuthUser {
     id: number,
@@ -18,6 +18,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     if(!token){
         return res.status(403).json({message: "Access Denied: No token"});
     }
+
     try {
         const verifiedUser =jwt.verify(token, JWT_SECRET) as AuthUser;
         req.user =verifiedUser;
