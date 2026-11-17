@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "../components/navbar";
+import { Navbar } from "../components/Navbar";
 import ChannelSidebar from "@/components/ChannelSidebar";
 import WorkspaceSidebar from "@/components/MiniSidebar";
 import ChatArea from "@/components/ChatArea";

@@ -1,7 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
-
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 let socket: Socket | null = null;
 
 export const connectSocket = (userId: number): Socket => {
@@ -9,7 +8,10 @@ export const connectSocket = (userId: number): Socket => {
         return socket;
     }
 
+    const token = localStorage.getItem("token");
+
     socket = io(SOCKET_URL, {
+        auth: { token},
         transports: ["websocket", 'polling'],
         withCredentials: true,
         autoConnect: true,
@@ -22,8 +24,8 @@ export const connectSocket = (userId: number): Socket => {
     socket?.emit("register_user", userId);
     });
 
-    socket.on("dissconnet",(reson) => {
-        console.warn("socket dissconnected:", reson);
+    socket.on("disconnet",(reson) => {
+        console.warn("socket disconnected:", reson);
     });
 
     socket.on("connect_error", (error)=> {

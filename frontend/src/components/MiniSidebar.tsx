@@ -116,7 +116,7 @@ export default function WorkspaceSidebar() {
                     </div>
                         </TooltipTrigger>
                         <TooltipContent side="right">
-                            <p className="text-xs font-semibold">{currentUser.name} (You)</p>
+                            <p className="text-xs font-semibold">{currentUser?.name} (You)</p>
                         </TooltipContent>
                     </Tooltip>
                 </div>
