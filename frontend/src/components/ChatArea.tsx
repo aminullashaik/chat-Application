@@ -7,6 +7,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import {Input } from "@/components/ui/input";
 import type { Message } from "@/types/chatTypes";
+import { connectSocket, getSocket } from "@/services/socketServices";
 
 export default function ChatArea() {
     const dispatch = useDispatch<AppDispatch>();
@@ -23,8 +24,32 @@ export default function ChatArea() {
 
     const [text, setText] = useState("");
 
-    //auto-scroll
+    
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        if (!currentUser?.id || !conversationId) return;
+        const socket = connectSocket(Number(currentUser.id));
+
+        socket.emit("join_conversation", conversationId);
+
+        const handleReceiveMessage = (incomingMsg: Message) => {
+            if(Number(incomingMsg.conversationId) === Number(conversationId)){
+                const senderId = incomingMsg.senderId ?? (incomingMsg as any).user?.id;
+                
+                
+                if (Number(senderId) !== Number(currentUser?.id)) {
+                    dispatch(appendMessage(incomingMsg));
+                }
+            }
+        };
+
+        socket.on("receive_message", handleReceiveMessage);
+
+        return () =>{
+            socket.off("receive_message", handleReceiveMessage);
+        };
+    }, [conversationId, currentUser?.id, dispatch]);
+    //auto-scroll
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth"});
     }, [messages]);
@@ -51,6 +76,9 @@ export default function ChatArea() {
                 content: trimmed,
             })
         );
+
+        const socket = getSocket();
+        socket?.emit("send_message", newMsg);
         setText("");
     };
 
@@ -71,10 +99,10 @@ export default function ChatArea() {
     }
 
     return(
-        <div className="flex flex-1 flex-col h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="flex flex-1 flex-col h-full min-h-0 overflow-hidden bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800">
 
             {/* Top info */}
-            <div className="flex h-14 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-white/50 backdrop:backdrop-blur-2xl dark:bg-slate-900/50">
+            <div className="flex h-14 shrink-0 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-white/50 backdrop:backdrop-blur-2xl dark:bg-slate-900/50">
             <div className="flex items-center gap-3">
                 <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white text-xs">
                     {selectedUser.name?.charAt(0).toUpperCase() || "U"}
@@ -91,7 +119,8 @@ export default function ChatArea() {
             </div>
 
             {/* Message Area */}
-            <ScrollArea className="flex-1 p-4">
+            <ScrollArea className="flex-1 min-h-0">
+                <div className="px-6 py-4">
             {loadingMessages ? (
                 <div className="flex h-full items-center justify-center text-xs text-slate-400 py-20">
                 Loading messages...
@@ -134,10 +163,11 @@ export default function ChatArea() {
                     <div ref = {messagesEndRef}/>
                 </div>
             )}
+            </div>
             </ScrollArea>
 
             {/* msg and send bar */}
-            <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <div className="p-3 shrink-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <form onSubmit={handleSend} className="flex items-center gap-2">
                     <Input
                     value={text}
