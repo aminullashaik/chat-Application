@@ -19,10 +19,10 @@ export const fetchMessages = createAsyncThunk(
     async(receiverId: number, {rejectWithValue}) => {
         try{
             const newConv = await api.post(`/conversations/direct/${receiverId}`);
-            const convId = newConv.data.data.conversation.id;
+            const convId = newConv.data?.data?.conversation.id;
 
             const msgResponse = await api.get(`/conversations/${convId}/messages`);
-            const msgList = msgResponse.data.data || [];
+            const msgList = msgResponse.data?.data || [];
             return {
                 conversationId: convId,
                 messages: msgList,
@@ -38,7 +38,7 @@ export const sendMessage = createAsyncThunk(
     async ({ conversationId, content} : SendMessagePayload, {rejectWithValue}) => {
         try{
             const res = await api.post(`/conversations/${conversationId}/messages`, { content});
-            return res.data.data;
+            return res.data?.data;
         } catch (err: any){
             return rejectWithValue(err.response?.data?.message || "Failed to send message");
         }
@@ -56,7 +56,10 @@ export const chatSlice = createSlice({
             state.messages = [];
         },
         appendMessage: (state, action: PayloadAction<Message>) => {
-            state.messages.push(action.payload);
+            const exists = state.messages.some((m) => m.id === action.payload.id);
+            if (!exists) {
+                state.messages.push(action.payload);
+            }
         },
         setOnlineUsers: (state, action: PayloadAction<number[]>) => {
             state.onlineUserIds = action.payload;

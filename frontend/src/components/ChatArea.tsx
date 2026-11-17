@@ -70,15 +70,20 @@ export default function ChatArea() {
     };
     dispatch(appendMessage(newMsg));
 
-        dispatch(
-            sendMessage({
+        const socket = getSocket();
+        if (socket && socket.connected) {
+            socket.emit("send_message", {
                 conversationId: conversationId,
                 content: trimmed,
-            })
-        );
-
-        const socket = getSocket();
-        socket?.emit("send_message", newMsg);
+            });
+        } else {
+            dispatch(
+                sendMessage({
+                    conversationId: conversationId,
+                    content: trimmed,
+                })
+            );
+        }
         setText("");
     };
 
