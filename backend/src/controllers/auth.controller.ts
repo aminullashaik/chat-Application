@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { loginUser, changeUserPassword } from "../services/auth.service";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 export const login = async (
     req: Request,
@@ -30,7 +31,7 @@ export const login = async (
 }
 
 export const changePassword = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {
