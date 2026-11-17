@@ -11,7 +11,7 @@ export const connectSocket = (userId: number): Socket => {
     const token = localStorage.getItem("token");
 
     socket = io(SOCKET_URL, {
-        auth: { token},
+        auth: { token },
         transports: ["websocket", 'polling'],
         withCredentials: true,
         autoConnect: true,
