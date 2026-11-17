@@ -62,17 +62,7 @@ io.on("connection", (socket) => {
       const conversation = await AppDataSource
         .getRepository(Conversation)
         .findOne({ where: { id } });
-
-      console.log("convo id:", id);
-      console.log("Loggied-in-user:", userId);
-      console.log("conversation:", conversation);
-
-      if (conversation) {
-        console.log("User One Id:", conversation?.userOneId);
-        console.log("User two id: ", conversation?.userTwoId);
-      
-      }
-
+        
       if (
         !conversation ||
         (conversation.userOneId !== userId &&
