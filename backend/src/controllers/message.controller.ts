@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { createMessage, getConversationMessages, editMessageService, removeMessage } from "../services/message.service";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 export const sendMessage = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {
 
-        const userId = req.user?.id;
+        const userId = req.user.id;
         const conversationId = Number(req.params.conversationId);
         const {content} = req.body;
 
@@ -44,7 +45,7 @@ export const sendMessage = async (
 }
 
 export const getMessages = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {
@@ -80,7 +81,7 @@ export const getMessages = async (
 }
 
 export const editMessage = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {
@@ -122,7 +123,7 @@ export const editMessage = async (
 }
 
 export const deleteMessage = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {

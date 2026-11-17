@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { createOrGetConversation, getAllMyConversations, getConversationsById } from "../services/conversation.service";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 export const createDirectConversation = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {
@@ -30,6 +31,7 @@ export const createDirectConversation = async (
         })
 
     } catch (err: any) {
+        console.log("error",err.message);
 
         if (err.message === "Receiver user not found") {
             return res.status(404).json({
@@ -50,7 +52,7 @@ export const createDirectConversation = async (
 }
 
 export const getMyConversations = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {
@@ -78,7 +80,7 @@ export const getMyConversations = async (
 }
 
 export const getConversationById = async (
-    req: Request,
+    req: AuthRequest,
     res: Response
 ) => {
     try {

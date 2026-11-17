@@ -32,7 +32,7 @@ export default function SignUp() {
             setIsLoading(true);
 
             try {
-                await api.post("/users/signUp", {
+                await api.post("/users/signup", {
                     name: name.trim(),
                     email: email.trim(),
                     mobile: mobile.trim(),
