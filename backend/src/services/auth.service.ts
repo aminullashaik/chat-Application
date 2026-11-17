@@ -1,5 +1,6 @@
 import  bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
+import { JWT_SECRET } from '../middleware/auth.middleware';
 
 import { 
     findUserByEmail,
@@ -23,7 +24,7 @@ export const loginUser = async (email: string, password: string) => {
 
     const token =  jwt.sign(
         {id: existingUser.id, role: existingUser.role},
-        "chat_app_2026",
+        JWT_SECRET,
         {
             expiresIn : '1d'
         }
