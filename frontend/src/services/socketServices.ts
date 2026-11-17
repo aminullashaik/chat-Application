@@ -24,8 +24,8 @@ export const connectSocket = (userId: number): Socket => {
     socket?.emit("register_user", userId);
     });
 
-    socket.on("disconnet",(reson) => {
-        console.warn("socket disconnected:", reson);
+    socket.on("disconnet",(reason) => {
+        console.warn("socket disconnected:", reason);
     });
 
     socket.on("connect_error", (error)=> {
