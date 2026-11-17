@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ScrollArea } from "./ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import {Input } from "@/components/ui/input";
+import type { Message } from "@/types/chatTypes";
 
 export default function ChatArea() {
     const dispatch = useDispatch<AppDispatch>();
@@ -16,7 +17,7 @@ export default function ChatArea() {
     );
 
     //active chat
-    const { selectedUser, messages, loadingMessages } = useSelector(
+    const { selectedUser,conversationId, messages, loadingMessages } = useSelector(
         (state: RootState) => state.chat
     );
 
@@ -33,20 +34,20 @@ export default function ChatArea() {
         if (e) e.preventDefault();
 
         const trimmed = text.trim();
-        if(!trimmed || !selectedUser) return;
+        if(!trimmed || !selectedUser || !conversationId) return;
 
-        // 1. local temporary message object
-     const newMsg = {
+        const newMsg: Message = {
         id: Date.now(),
         content: trimmed,
         senderId: Number(currentUser?.id),
+        conversationId: conversationId,
         createdAt: new Date().toISOString(),
     };
     dispatch(appendMessage(newMsg));
 
         dispatch(
             sendMessage({
-                receiverId: selectedUser.id,
+                conversationId: conversationId,
                 content: trimmed,
             })
         );
@@ -103,7 +104,7 @@ export default function ChatArea() {
             ) : (
                 <div className="space-y-3">
                     {messages.map((msg) => {
-                        const isMe = Number(msg.senderId) === Number(currentUser?.id);
+                        const isMe = Number(msg.senderId ?? (msg as any).user?.id)  === Number(currentUser?.id);
                         return(
                             <div
                             key={msg.id}

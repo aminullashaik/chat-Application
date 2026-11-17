@@ -14,6 +14,7 @@ export interface Message {
 //Inside Redux
 export interface ChatState {
     selectedUser: User | null;
+    conversationId: number | null;
     messages: Message[];
     loadingMessages: boolean;
     sendingMessage: boolean;
@@ -22,6 +23,6 @@ export interface ChatState {
 }
 
 export interface SendMessagePayload {
-    receiverId: number;
+    conversationId: number;
     content: string;
 }

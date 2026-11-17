@@ -5,6 +5,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 
 const initialState: ChatState = {
     selectedUser: null,
+    conversationId: null,
     messages: [],
     loadingMessages: false,
     sendingMessage: false,
@@ -15,10 +16,17 @@ const initialState: ChatState = {
 
 export const fetchMessages = createAsyncThunk(
     "chat/fetchMessages",
-    async(userId: number, {rejectWithValue}) => {
+    async(receiverId: number, {rejectWithValue}) => {
         try{
-            const res = await api.get(`/messages/${userId}`);
-            return res.data.messages ?? res.data;
+            const newConv = await api.post(`/conversations/direct/${receiverId}`);
+            const convId = newConv.data.data.conversation.id;
+
+            const msgResponse = await api.get(`/conversations/${convId}/messages`);
+            const msgList = msgResponse.data.data || [];
+            return {
+                conversationId: convId,
+                messages: msgList,
+            }
         } catch (err: any){
             return rejectWithValue(err.response?.data?.message || "Faled to fecth the messages");
         }
@@ -26,11 +34,11 @@ export const fetchMessages = createAsyncThunk(
 );
 
 export const sendMessage = createAsyncThunk(
-    "chat/sendMessage",
-    async ({ receiverId, content} : SendMessagePayload, {rejectWithValue}) => {
+    "chat/sendMessages",
+    async ({ conversationId, content} : SendMessagePayload, {rejectWithValue}) => {
         try{
-            const res = await api.post(`/messages/send/${receiverId}`, { content});
-            return res.data.message ?? res.data;
+            const res = await api.post(`/conversations/${conversationId}/messages`, { content});
+            return res.data.data;
         } catch (err: any){
             return rejectWithValue(err.response?.data?.message || "Failed to send message");
         }
@@ -44,6 +52,7 @@ export const chatSlice = createSlice({
     reducers: {
         setSelectedUser: (state, action: PayloadAction<User | null>) => {
             state.selectedUser = action.payload;
+            state.conversationId = null;
             state.messages = [];
         },
         appendMessage: (state, action: PayloadAction<Message>) => {
@@ -59,16 +68,16 @@ extraReducers: (builder) => {
     .addCase(fetchMessages.pending, (state) => {
         state.loadingMessages = true;
     })
-    .addCase(fetchMessages.fulfilled, (state, action: PayloadAction<Message[]>) => {
+    .addCase(fetchMessages.fulfilled, (state, action) => {
         state.loadingMessages = false;
-        state.messages = action.payload;
+        state.conversationId = action.payload.conversationId;
+        state.messages = action.payload.messages;
     })
     .addCase(fetchMessages.rejected, (state, action) => {
         state.loadingMessages = false;
         state.error = action.payload as string;
     })
-    .addCase(sendMessage.fulfilled, (state, action: PayloadAction<Message>) => {
-        state.messages.push(action.payload);
+    .addCase(sendMessage.fulfilled, (_state, _action) => {
     });
 },
 });

@@ -8,13 +8,13 @@ router.post("/signup",signup);
 
 router.get("/",getAllUsers);
 
-router.get("/:id", getUserById);
-
 router.get("/name/:name", getUserByName);
 
 router.get("/email/:email", getUserByEmail);
 
 router.get("/mobile/:mobile", getUserByMobile);
+
+router.get("/:id", getUserById);
 
 router.put("/:id", updateUser);
 
