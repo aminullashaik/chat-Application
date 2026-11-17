@@ -4,7 +4,7 @@ import { getAllUsers, getUserByEmail,getUserById,getUserByMobile,getUserByName,u
 
 const router = Router();
 
-router.post("/signup",signup);
+router.post("/signUp",signup);
 
 router.get("/",getAllUsers);
 
