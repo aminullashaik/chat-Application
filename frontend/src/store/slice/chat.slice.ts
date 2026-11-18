@@ -8,7 +8,6 @@ const initialState: ChatState = {
     conversationId: null,
     messages: [],
     loadingMessages: false,
-    sendingMessage: false,
     onlineUserIds: [],
     error: null,
 
@@ -80,8 +79,6 @@ extraReducers: (builder) => {
         state.loadingMessages = false;
         state.error = action.payload as string;
     })
-    .addCase(sendMessage.fulfilled, (_state, _action) => {
-    });
 },
 });
 

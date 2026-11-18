@@ -20,11 +20,9 @@ export const connectSocket = (userId: number): Socket => {
     socket.on("connect", () => {
         console.log("socket connected successfully ID:", socket?.id);
 
-    //tells backend who is the user
-    socket?.emit("register_user", userId);
     });
 
-    socket.on("disconnet",(reason) => {
+    socket.on("disconnect",(reason) => {
         console.warn("socket disconnected:", reason);
     });
 

@@ -45,6 +45,8 @@ export default function ChatArea() {
 
         socket.on("receive_message", handleReceiveMessage);
 
+        console.log("Active listeners count:", socket.listeners("receive_message").length);
+
         return () =>{
             socket.off("receive_message", handleReceiveMessage);
         };

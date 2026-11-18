@@ -12,10 +12,10 @@ export const socketAuthMiddleware = (
         const rawToken = socket.handshake.auth?.token || authHeader; //Postman, standard http header
 
         if (typeof rawToken !== "string" || !rawToken.trim()) {
-            next(new Error("Unauthorized: Token Missing"))
+            return next(new Error("Unauthorized: Token Missing"))
         }
 
-        const token = rawToken.startsWith("Bearer ") ? rawToken.split(" ") : rawToken
+        const token = rawToken.startsWith("Bearer ") ? rawToken.split(" ")[1] : rawToken
 
         socket.data.user = jwt.verify(token, JWT_SECRET) as AuthUser;
 

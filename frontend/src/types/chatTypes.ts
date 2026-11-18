@@ -17,7 +17,6 @@ export interface ChatState {
     conversationId: number | null;
     messages: Message[];
     loadingMessages: boolean;
-    sendingMessage: boolean;
     onlineUserIds: number[];
     error: string | null;
 }
