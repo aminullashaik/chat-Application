@@ -55,7 +55,7 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             const content = typeof data?.content === 'string' ? data.content.trim() : ''
 
             if (!Number.isInteger(conversationId) || conversationId < 0 || !content) {
-                socket.emit("error_message", {message: "Invalid message data"})
+                return socket.emit("error_message", {message: "Invalid message data"})
             }
 
             const roomName = `Conversation_${conversationId}`
@@ -75,7 +75,7 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
                 })
             )
 
-            io.to(roomName).emit("recieve_message", {
+            io.to(roomName).emit("receive_message", {
                 id: saved.id,
                 conversationId,
                 senderId: userId,
