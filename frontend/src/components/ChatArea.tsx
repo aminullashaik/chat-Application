@@ -28,7 +28,7 @@ export default function ChatArea() {
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
         if (!currentUser?.id || !conversationId) return;
-        const socket = connectSocket(Number(currentUser.id));
+        const socket = connectSocket();
 
         socket.emit("join_conversation", conversationId);
 

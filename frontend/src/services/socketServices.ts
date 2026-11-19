@@ -3,12 +3,12 @@ import { io, type Socket } from "socket.io-client";
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 let socket: Socket | null = null;
 
-export const connectSocket = (userId: number): Socket => {
+export const connectSocket = (): Socket => {
     if(socket && socket.connected) {
         return socket;
     }
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     socket = io(SOCKET_URL, {
         auth: { token },

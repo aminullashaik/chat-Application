@@ -7,7 +7,7 @@ import ChatArea from "@/components/ChatArea";
 
 export default function HomePage() {
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     useEffect(() => {
         if (!token) {
             navigate("/login");
