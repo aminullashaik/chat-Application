@@ -3,9 +3,26 @@ import { AppDataSource } from "../dataSource";
 import { Conversation } from "../entities/Conversation";
 import { Message } from "../entities/Message";
 
+const onlineUsers: Record<number, string[]> = {}
+
 export const registerChatHandler = (io: Server, socket: Socket) => {
 
     const userId = socket.data.user.id
+    if (!userId) return socket.disconnect();
+
+    if (!onlineUsers[userId]) {
+        onlineUsers[userId] = []
+    }
+
+    if (!onlineUsers[userId].includes(socket.id)) {
+        onlineUsers[userId].push(socket.id)
+    }
+
+    if (onlineUsers[userId].length === 1) {
+        socket.broadcast.emit("user_status_change", { userId, "isOnline": true })
+    }
+
+    socket.emit("initial_online_users", Object.keys(onlineUsers).map(Number))
 
     socket.on("join_conversation", async (payload: any) => {
 
@@ -15,7 +32,7 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             const conversationId = Number(rawId);
 
             if (!Number.isInteger(conversationId) || conversationId < 0) {
-                socket.emit("error_message", {message: "Invalid conversationId"})
+                socket.emit("error_message", { message: "Invalid conversationId" })
             }
 
             const roomName = `Conversation_${conversationId}`;
@@ -23,12 +40,12 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             if (!socket.rooms.has(roomName)) {
 
                 const conversation = await AppDataSource.getRepository(Conversation).findOne({
-                    where : {id: conversationId},
+                    where: { id: conversationId },
                     select: ['id', 'userOneId', 'userTwoId']
                 })
 
                 if (
-                    !conversation || 
+                    !conversation ||
                     (conversation.userOneId !== userId && conversation.userTwoId !== userId)
                 ) {
                     return socket.emit("error_message", {
@@ -40,11 +57,11 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
 
             }
 
-            socket.emit("joined_conversation", {conversationId});
+            socket.emit("joined_conversation", { conversationId });
 
-        } catch (err : any) {
+        } catch (err: any) {
             console.error(`Error in join conversation (user ${userId}):`, err);
-            socket.emit("error_message", {message: "Failed to join conversation"})
+            socket.emit("error_message", { message: "Failed to join conversation" })
         }
     })
 
@@ -55,7 +72,7 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             const content = typeof data?.content === 'string' ? data.content.trim() : ''
 
             if (!Number.isInteger(conversationId) || conversationId < 0 || !content) {
-                return socket.emit("error_message", {message: "Invalid message data"})
+                return socket.emit("error_message", { message: "Invalid message data" })
             }
 
             const roomName = `Conversation_${conversationId}`
@@ -70,8 +87,8 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             const saved = await messageRepo.save(
                 messageRepo.create({
                     content,
-                    conversation: {id: conversationId},
-                    user: {id: userId}
+                    conversation: { id: conversationId },
+                    user: { id: userId }
                 })
             )
 
@@ -83,9 +100,26 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
                 createdAt: saved.createdAt
             })
 
-        } catch (err : any) {
+        } catch (err: any) {
             console.error(`Error in send_message (User: ${userId}): `, err);
-            socket.emit("error_message", {message: "Failed to send message."})
+            socket.emit("error_message", { message: "Failed to send message." })
         }
     })
+
+    socket.on("disconnect", () => {
+        const userSockets = onlineUsers[userId];
+        if (!userSockets) return;
+
+        onlineUsers[userId] = userSockets.filter((id) => id !== socket.id);
+
+        if (onlineUsers[userId].length === 0) {
+            delete onlineUsers[userId];
+            io.emit("user_status_change", {
+                userId,
+                isOnline: false,
+                lastSeen: new Date().toISOString()
+            });
+        }
+    });
+    
 }
