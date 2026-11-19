@@ -100,10 +100,44 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
                 createdAt: saved.createdAt
             })
 
+            socket.to(roomName).emit("user_stop_typing", {
+                conversationId,
+                userId,
+            });
+
         } catch (err: any) {
             console.error(`Error in send_message (User: ${userId}): `, err);
             socket.emit("error_message", { message: "Failed to send message." })
         }
+    })
+
+    socket.on("typing", (data: any) => {
+
+        const conversationId = Number(data?.conversationId)
+        if (!Number.isInteger(conversationId)) return;
+
+        const roomName = `Conversation_${conversationId}`
+
+        if (!socket.rooms.has(roomName)) return;
+
+        socket.to(roomName).emit("user_typing", {
+            conversationId,
+            userId
+        })
+
+    })
+
+    socket.on("stop_typing", (data: any) => {
+        const conversationId = Number(data?.conversationId);
+        if (!Number.isInteger(conversationId) || conversationId < 0) return;
+
+        const roomName = `Conversation_${conversationId}`;
+        if (!socket.rooms.has(roomName)) return;
+
+        socket.to(roomName).emit("user_stop_typing", {
+            conversationId,
+            userId
+        })
     })
 
     socket.on("disconnect", () => {
@@ -121,5 +155,5 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             });
         }
     });
-    
+
 }
