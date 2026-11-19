@@ -50,6 +50,17 @@ export const chatSlice = createSlice({
         setOnlineUsers: (state, action: PayloadAction<number[]>) => {
             state.onlineUserIds = action.payload;
         },
+        updateUserStatus: (state, action: PayloadAction<{ userId: number; isOnline: boolean }>) => {
+            const { userId, isOnline } = action.payload;
+            const targetId = Number(userId);
+            if (isOnline) {
+                if (!state.onlineUserIds.includes(userId)) {
+                    state.onlineUserIds.push(targetId);
+                }
+            } else {
+                state.onlineUserIds = state.onlineUserIds.filter((id) => Number(id) !== userId);
+            }
+        },
 },
 
 extraReducers: (builder) => {
@@ -69,5 +80,5 @@ extraReducers: (builder) => {
 },
 });
 
-export const { setSelectedUser, appendMessage, setOnlineUsers} = chatSlice.actions;
+export const { setSelectedUser, appendMessage, setOnlineUsers, updateUserStatus} = chatSlice.actions;
 export default chatSlice.reducer;

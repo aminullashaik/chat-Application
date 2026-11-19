@@ -47,8 +47,9 @@ export const Navbar: React.FC = () => {
     };
 
     const handleLogout = () => {
-        dispatch(logout());
         disconnectSocket();
+        dispatch(logout());
+        
         navigate("/login");
     };
 
