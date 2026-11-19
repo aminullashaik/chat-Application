@@ -6,10 +6,12 @@ import Signup from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import HomePage from "./pages/HomePage";
 import { UserPage } from "./pages/UserPage";
+import { Toaster} from "sonner";
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
+    <Toaster richColors position="top-right" closeButton />
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />

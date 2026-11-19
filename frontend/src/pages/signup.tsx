@@ -1,7 +1,7 @@
 import api from "../api/axiosInstance";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import {toast} from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,13 +39,13 @@ export default function SignUp() {
                     password: password,
                     role: role.trim(),
                 });
-
+                toast.success("Successfully Signup");
                 navigate("/login");
             } catch (error: any){
                 if(error.response?.data?.message) {
                     setErr(error.response.data.message);
                 } else{
-                    setErr("Something went wrong");
+                    toast.error("Something went wrong");
                 }
             }finally{
                 setIsLoading(false);
