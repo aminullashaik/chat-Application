@@ -1,10 +1,13 @@
-import { io, type Socket } from "socket.io-client";
+import {  io, type Socket } from "socket.io-client";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 let socket: Socket | null = null;
 
 export const connectSocket = (): Socket => {
-    if(socket && socket.connected) {
+    if(socket){
+        if(!socket.connected){
+            socket.connect();
+        }
         return socket;
     }
 
