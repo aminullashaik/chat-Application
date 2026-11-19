@@ -1,48 +1,6 @@
-import { Request, Response } from "express";
-import { createMessage, getConversationMessages, editMessageService, removeMessage } from "../services/message.service";
+import { Response } from "express";
+import { getConversationMessages, editMessageService, removeMessage } from "../services/message.service";
 import { AuthRequest } from "../middleware/auth.middleware";
-
-export const sendMessage = async (
-    req: AuthRequest,
-    res: Response
-) => {
-    try {
-
-        const userId = req.user.id;
-        const conversationId = Number(req.params.conversationId);
-        const {content} = req.body;
-
-        if (!userId) {
-            return res.status(401).json({
-                message: "Unauthorized"
-            })
-        }
-
-        if (Number.isNaN(conversationId)) {
-            return res.status(400).json({
-                message: "Invalid conversationId"
-            })
-        }
-
-        if (!content) {
-            return res.status(400).json({
-                message: "Missing required field"
-            })
-        }
-
-        const response = await createMessage(conversationId, userId, content);
-
-        return res.status(200).json({
-            message: "Message created",
-            data: response
-        })
-
-    } catch (err: any) {
-        return res.status(500).json({
-            message: err.message
-        })
-    }
-}
 
 export const getMessages = async (
     req: AuthRequest,

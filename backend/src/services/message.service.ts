@@ -1,8 +1,4 @@
-import { sendMessage, getMessages, editMessage, deleteMessage } from "../repository/message.repository";
-
-export const createMessage = async (conversationId: number, userId: number, content: string) => {
-    return await sendMessage(conversationId, userId, content);
-}
+import { getMessages, editMessage, deleteMessage } from "../repository/message.repository";
 
 export const getConversationMessages = async (conversationId: number, userId: number) => {
     return await getMessages(conversationId, userId)
