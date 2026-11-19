@@ -4,11 +4,9 @@ import type { AppDispatch, RootState } from "@/store/store";
 import { fetchUsers } from "@/store/slice/user.slice";
 import { setSelectedUser, fetchMessages } from "@/store/slice/chat.slice";
 
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ChevronDown, 
-  Search, 
 } from "lucide-react";
 
 
@@ -45,9 +43,6 @@ export default function ChannelSidebar() {
             {currentUser?.name || "Member"} (You)
           </span>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700">
-          <Search className="h-4 w-4" />
-        </Button>
       </div>
 
       {/* --- MAIN SCROLLABLE BODY --- */}

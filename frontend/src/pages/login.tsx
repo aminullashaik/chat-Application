@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../api/axiosInstance";
-
+import {toast} from "sonner";
 import { useDispatch } from 'react-redux'
 
 // Mock imports for shadcn/ui components
@@ -48,7 +48,7 @@ export default function LoginPage() {
                     token: data.token
                 })
             )
-
+            toast.success("Successfully loggedin");
             navigate('/home')
 
         } catch (err: any) {
@@ -56,6 +56,7 @@ export default function LoginPage() {
                 err.response?.data?.message ||
                 "Invalid email or password"
             )
+            
         } finally {
             setIsLoading(false); // Instantly releases state when your real API finishes
         }
