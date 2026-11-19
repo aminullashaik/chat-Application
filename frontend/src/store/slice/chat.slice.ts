@@ -1,6 +1,6 @@
 import api from "@/api/axiosInstance";
 import type {User} from "@/types/userTypes";
-import type { ChatState, Message, SendMessagePayload } from "@/types/chatTypes";
+import type { ChatState, Message } from "@/types/chatTypes";
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ChatState = {
@@ -29,19 +29,6 @@ export const fetchMessages = createAsyncThunk(
         } catch (err: any){
             return rejectWithValue(err.response?.data?.message || "Faled to fecth the messages");
         }
-    }
-);
-
-export const sendMessage = createAsyncThunk(
-    "chat/sendMessages",
-    async ({ conversationId, content} : SendMessagePayload, {rejectWithValue}) => {
-        try{
-            const res = await api.post(`/conversations/${conversationId}/messages`, { content});
-            return res.data?.data;
-        } catch (err: any){
-            return rejectWithValue(err.response?.data?.message || "Failed to send message");
-        }
-
     }
 );
 

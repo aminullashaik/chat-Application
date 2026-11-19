@@ -5,32 +5,6 @@ import { Conversation } from "../entities/Conversation";
 const messageRepository = AppDataSource.getRepository(Message);
 const conversationRepository = AppDataSource.getRepository(Conversation);
 
-export const sendMessage = async (conversationId: number, userId: number, content: string) => {
-
-    const conversation = await conversationRepository.findOne({
-        where: {id: conversationId}
-    })
-
-    if (!conversation) {
-        return null;
-    }
-
-    if (
-        conversation.userOneId !== userId && 
-        conversation.userTwoId !== userId
-    ) {
-        return null;
-    }
-
-    const message = messageRepository.create({
-        content,
-        conversation: {id: conversationId},
-        user: {id: userId}
-    })
-
-    return await messageRepository.save(message);
-}
-
 export const getMessages = async (conversationId: number, userId: number) => {
 
     const conversation = await conversationRepository.findOne({
