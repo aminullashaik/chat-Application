@@ -154,12 +154,12 @@ export default function ChangePasswordPage() {
                 </CardContent>
 
                 <CardFooter className="justify-center border-t border-slate-100 p-4 dark:border-slate-900">
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                        Cancel and return to Home{" "}
-                    <Link to="/home" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
-                    Home Page
-                    </Link>
-                    </p>
+                    <a 
+                    href="#back" className="text-sm font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+                    onClick={() => navigate('/home')}
+                    >
+                        Cancel and return to Home
+                    </a>
                 </CardFooter>
 
             </Card>
