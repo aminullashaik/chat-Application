@@ -11,6 +11,9 @@ import { getSocket } from "@/services/socketServices";
 
 export default function ChatArea() {
     const dispatch = useDispatch<AppDispatch>();
+    const isTypingRef = useRef(false);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [isTyping, setIsTyping] = useState(false);
 
     //logged in user for authslice
     const currentUser = useSelector((state: RootState) =>
@@ -39,18 +42,64 @@ export default function ChatArea() {
             }
         };
 
+        const handleTyping =(data: {conversationId: number; userId: number}) => {
+            if(Number(data.conversationId) === Number(data.conversationId)){
+                setIsTyping(true);
+            }
+        };
+
+        const handleStopTyping = (data : { conversationId : number; userId: number}) => {
+            if(Number(data.conversationId) === Number(data.conversationId)){
+                setIsTyping(false);
+            }
+        };
+
         socket.on("receive_message", handleReceiveMessage);
+        socket.on("user_typing", handleTyping);
+        socket.on("user_stop_typing", handleStopTyping);
 
         console.log("Active listeners count:", socket.listeners("receive_message").length);
 
         return () => {
             socket.off("receive_message", handleReceiveMessage);
+            socket.off("user_typing", handleTyping);
+            socket.off("user_stop_typing", handleStopTyping);
+            setIsTyping(false); //rest when chat changes
         };
     }, [conversationId, currentUser?.id, dispatch]);
     //auto-scroll
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setText(value);
+
+        const socket = getSocket();
+        if(!socket || !conversationId) return;
+
+        if(!value.trim()){ //if empty
+            if(typingTimeoutRef.current)
+                clearTimeout(typingTimeoutRef.current);
+            isTypingRef.current = false;
+            socket.emit("stop_typing", { conversationId });
+            return;
+        }
+        if(!isTypingRef.current){
+            isTypingRef.current = true;
+            socket.emit("typing", {conversationId});
+        }
+        if(typingTimeoutRef.current){
+            clearTimeout(typingTimeoutRef.current);
+        }
+        typingTimeoutRef.current = setTimeout(() => {
+            isTypingRef.current = false;
+            socket.emit("stop_typing", { conversationId});
+        }, 2000);
+
+    };
+
 
     //Send message
     const handleSend = (e?: React.FormEvent) => {
@@ -65,6 +114,11 @@ export default function ChatArea() {
                 conversationId: conversationId,
                 content: trimmed,
             });
+            if(typingTimeoutRef.current){
+                clearTimeout(typingTimeoutRef.current);
+            }
+            isTypingRef.current = false;
+            socket.emit("stop_typing",{conversationId});
         }
         setText("");
     };
@@ -99,7 +153,13 @@ export default function ChatArea() {
                             {selectedUser.name}
                         </h2>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                            {selectedUser.email}
+                            {isTyping ? (
+                                <span className="text-indigo-500 dark:text-indigo-400 font-medium animate-pulse">
+                                    typing...
+                                </span>
+                            ) : (
+                                selectedUser.email
+                            )}
                         </p>
                     </div>
                 </div>
@@ -154,10 +214,21 @@ export default function ChatArea() {
 
             {/* msg and send bar */}
             <div className="p-3 shrink-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                {isTyping && (
+                    <div className="px-1 pb-1.5 text-[11px] text-slate-400 flex items-center gap-1.5 animate-in fade-in duration-150">
+                        <span className="italic font-medium text-indigo-500 dark:text-indigo-400">
+                            {selectedUser.name} is typing
+                        </span>
+                        <span className="flex items-center gap-0.5 pt-0.5">
+                            <span className="h-1 w-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:-0.3s]"></span>
+                            <span className="h-1 w-1 rounded-full bg-indigo-500 animate-bounce"></span>
+                        </span>
+                        </div>
+                )}
                 <form onSubmit={handleSend} className="flex items-center gap-2">
                     <Input
                         value={text}
-                        onChange={(e) => setText(e.target.value)}
+                        onChange={handleInputChange}
                         placeholder={`Message ${selectedUser.name}...`}
                         className="flex text-xs h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700" />
                     <Button
