@@ -42,14 +42,14 @@ export default function ChatArea() {
             }
         };
 
-        const handleTyping =(data: {conversationId: number; userId: number}) => {
-            if(Number(data.conversationId) === Number(data.conversationId)){
+        const handleTyping =(data: {conversationId: number}) => {
+            if(Number(data.conversationId) === Number(conversationId)){
                 setIsTyping(true);
             }
         };
 
-        const handleStopTyping = (data : { conversationId : number; userId: number}) => {
-            if(Number(data.conversationId) === Number(data.conversationId)){
+        const handleStopTyping = (data : { conversationId : number}) => {
+            if(Number(data.conversationId) === Number(conversationId)){
                 setIsTyping(false);
             }
         };
@@ -216,8 +216,8 @@ export default function ChatArea() {
             <div className="p-3 shrink-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 {isTyping && (
                     <div className="px-1 pb-1.5 text-[11px] text-slate-400 flex items-center gap-1.5 animate-in fade-in duration-150">
-                        <span className="italic font-medium text-indigo-500 dark:text-indigo-400">
-                            {selectedUser.name} is typing
+                        <span className="italic font-medium text-indigo-500 dark:text-indigo-400 animate-bounce">
+                            {selectedUser.name} is typing...
                         </span>
                         <span className="flex items-center gap-0.5 pt-0.5">
                             <span className="h-1 w-1 rounded-full bg-indigo-500 animate-bounce [animation-delay:-0.3s]"></span>
