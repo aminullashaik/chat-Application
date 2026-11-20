@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // Import icons for the toggle visibility functionality
 import { Eye, EyeOff } from "lucide-react";
 
@@ -154,10 +154,14 @@ export default function ChangePasswordPage() {
                 </CardContent>
 
                 <CardFooter className="justify-center border-t border-slate-100 p-4 dark:border-slate-900">
-                    <a href="#back" className="text-sm font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400">
-                        Cancel and return to Home
-                    </a>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                        Cancel and return to Home{" "}
+                    <Link to="/home" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
+                    Home Page
+                    </Link>
+                    </p>
                 </CardFooter>
+
             </Card>
         </div>
     );
