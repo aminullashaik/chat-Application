@@ -7,7 +7,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Message } from "@/types/chatTypes";
-import { connectSocket, getSocket } from "@/services/socketServices";
+import { getSocket } from "@/services/socketServices";
 
 export default function ChatArea() {
     const dispatch = useDispatch<AppDispatch>();
@@ -28,18 +28,14 @@ export default function ChatArea() {
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
         if (!currentUser?.id || !conversationId) return;
-        const socket = connectSocket();
+        const socket = getSocket();
+        if(!socket) return;
 
         socket.emit("join_conversation", conversationId);
 
         const handleReceiveMessage = (incomingMsg: Message) => {
             if (Number(incomingMsg.conversationId) === Number(conversationId)) {
-                const senderId = incomingMsg.senderId ?? (incomingMsg as any).user?.id;
-
-
-                if (Number(senderId) !== Number(currentUser?.id)) {
                     dispatch(appendMessage(incomingMsg));
-                }
             }
         };
 
@@ -62,15 +58,6 @@ export default function ChatArea() {
 
         const trimmed = text.trim();
         if (!trimmed || !selectedUser || !conversationId) return;
-
-        const newMsg: Message = {
-            id: Date.now(),
-            content: trimmed,
-            senderId: Number(currentUser?.id),
-            conversationId: conversationId,
-            createdAt: new Date().toISOString(),
-        };
-        dispatch(appendMessage(newMsg));
 
         const socket = getSocket();
         if (socket && socket.connected) {
