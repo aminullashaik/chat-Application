@@ -1,10 +1,17 @@
 import { useState } from "react";
 // Imports for shadcn/ui components
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Button } from "./ui/button";
 // Icons used for the bottom utility layout actions
-import { Plus, Compass, Settings, Bell, Grid } from "lucide-react";
+import { Plus, Grid } from "lucide-react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
 
 // Mock list of workspace channels
 const WORKSPACES = [
@@ -12,6 +19,7 @@ const WORKSPACES = [
 ];
 
 export default function WorkspaceSidebar() {
+    const navigate = useNavigate()
     const [activeWorkspace, setActiveWorkspace] = useState("w1");
     const currentUser = useSelector((state: RootState) => state.auth.user);
 
@@ -76,49 +84,91 @@ export default function WorkspaceSidebar() {
 
                 {/* Bottom Section: User Tools, Alerts & Configuration Action Tray */}
                 <div className="flex flex-col items-center gap-3">
-                    {/* Discover Channels */}
-                    <Tooltip>
-                        <TooltipTrigger className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus-visible:outline-none">
-                            <Compass className="h-5 w-5" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p className="text-xs font-medium">Discover</p>
-                        </TooltipContent>
-                    </Tooltip>
-
-                    {/* Activity Alerts / Notifications */}
-                    <Tooltip>
-                        <TooltipTrigger className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus-visible:outline-none">
-                            <Bell className="h-5 w-5" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p className="text-xs font-medium">Notifications</p>
-                        </TooltipContent>
-                    </Tooltip>
-
-                    {/* Settings Trigger */}
-                    <Tooltip>
-                        <TooltipTrigger className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus-visible:outline-none">
-                            <Settings className="h-5 w-5" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p className="text-xs font-medium">Preferences</p>
-                        </TooltipContent>
-                    </Tooltip>
 
                     <div className="h-px w-8 bg-slate-800 my-1" />
 
                     {/* Active Profile Avatar Node */}
-                    <Tooltip>
-                        <TooltipTrigger className="relative h-9 w-9 shrink-0 rounded-xl bg-slate-700 font-medium text-xs text-white shadow ring-slate-900 transition-transform active:scale-95 hover:scale-105 focus-visible:outline-none">
-                           <div className="h-full w-full rounded-full bg-indigo-600 flex items-center justify-center text-xs font-semibold text-white">
-                        {currentUser?.name?.charAt(0).toUpperCase() || "U"}
-                    </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            <p className="text-xs font-semibold">{currentUser?.name} (You)</p>
-                        </TooltipContent>
-                    </Tooltip>
+                    <Popover>
+                        <Tooltip>
+                            <TooltipTrigger >
+                                <PopoverTrigger >
+                                    <button
+                                        type="button"
+                                        className="relative h-9 w-9 shrink-0 rounded-xl bg-slate-700 font-medium text-xs text-white shadow ring-slate-900 transition-transform active:scale-95 hover:scale-105 focus-visible:outline-none"
+                                    >
+                                        <div className="h-full w-full rounded-full bg-indigo-600 flex items-center justify-center text-xs font-semibold text-white">
+                                            {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+                                        </div>
+                                    </button>
+                                </PopoverTrigger>
+                            </TooltipTrigger>
+
+                            <TooltipContent side="right">
+                                <p className="text-xs font-semibold">{currentUser?.name} (You)</p>
+                            </TooltipContent>
+                        </Tooltip>
+
+                        {/* Floating Card on Click */}
+                        <PopoverContent side="right" align="start" className="w-64 p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 shrink-0 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-semibold text-white">
+                                    {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+                                </div>
+                                <div className="overflow-hidden">
+                                    <h4 className="text-sm font-semibold truncate">
+                                        {currentUser?.name || "Unknown User"}
+                                    </h4>
+                                    <p className="text-xs text-slate-500 truncate">
+                                        {currentUser?.email || "No email provided"}
+                                    </p>
+                                </div>
+
+                            </div>
+                            <div>
+                                <Button
+                                    className='w-full bg-indigo-600 font-medium hover:bg-indigo-400'
+                                    onClick={() => navigate('/change-password')}
+                                >
+                                    Change Password
+                                </Button>
+                            </div>
+
+                            {/* Optional Extra Details */}
+                            {currentUser?.role && (
+                                <div>
+                                    <div className="mt-3 pt-3 border-t border-slate-100 flex justify-between text-xs">
+                                        <span className="text-slate-500">Role</span>
+                                        <span className="font-medium">{currentUser.role}</span>
+                                    </div>
+
+                                    <div className="mt-1 pt-1 flex justify-between text-xs">
+                                        <span className="text-slate-500">Mobile</span>
+                                        <span className="font-medium">
+                                            {currentUser.mobile}
+                                        </span>
+                                    </div>
+
+                                    <div className="mt-1 pt-1 flex justify-between text-xs">
+                                        <span className="text-slate-500">Status</span>
+                                        {currentUser?.status === "Online" && (
+                                            <span className="inline-flex items-center gap-1.5 font-medium text-emerald-600">
+                                                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                                                {currentUser.status}
+                                            </span>
+                                        )}
+                                        {currentUser?.status === "Offline" && (
+                                            <span className="inline-flex items-center gap-1.5 font-medium text-rose-600">
+                                                <span className="h-2 w-2 rounded-full bg-rose-500" />
+                                                {currentUser.status}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                </div>
+
+                            )}
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
             </div>
