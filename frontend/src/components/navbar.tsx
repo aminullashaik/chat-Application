@@ -18,12 +18,12 @@ export const Navbar: React.FC = () => {
     const navigate = useNavigate();
 
     const currentUser = useSelector((state: RootState) => state.auth.user);
-    const { users = []} = useSelector((state: RootState) => state.users || {});
+    const { users = [] } = useSelector((state: RootState) => state.users || {});
 
     const filterUser = users.filter((u) => {
-        if(u.id === currentUser?.id) return false;
+        if (u.id === currentUser?.id) return false;
         const q = searchQuery.toLowerCase().trim();
-        if(!q) return false;
+        if (!q) return false;
         return (
             u.name?.toLowerCase().includes(q)
         );
@@ -31,15 +31,15 @@ export const Navbar: React.FC = () => {
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if(searchRef.current && !searchRef.current.contains(e.target as Node)) {
+            if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
                 setIsOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    },[]);
+    }, []);
 
-    const handleSelectUser = (user: User)=> {
+    const handleSelectUser = (user: User) => {
         dispatch(setSelectedUser(user));
         dispatch(fetchMessages(user.id));
         setSearchQuery("");
@@ -47,10 +47,11 @@ export const Navbar: React.FC = () => {
     };
 
     const handleLogout = () => {
-        disconnectSocket();
-        dispatch(logout());
-        
-        navigate("/login");
+        if (window.confirm("Are you sure you want to logout from this application?")) {
+            disconnectSocket();
+            dispatch(logout());
+            navigate("/login");
+        }
     };
 
     return (
@@ -77,33 +78,33 @@ export const Navbar: React.FC = () => {
                 />
                 {searchQuery && (
                     <button
-                    onClick={() => {
-                        setSearchQuery("");
-                        setIsOpen(false);
-                    }}
-                    className="absolute right-2.5 text-slate-400 hover:text-slate-200">
-                        <X className="h-3 w-3"/>
+                        onClick={() => {
+                            setSearchQuery("");
+                            setIsOpen(false);
+                        }}
+                        className="absolute right-2.5 text-slate-400 hover:text-slate-200">
+                        <X className="h-3 w-3" />
                     </button>
                 )}
 
                 {isOpen && searchQuery.trim() && (
                     <div className="absolute top-10 left-0 w-full bg-slate-800 border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                         <div className="px-3 py-1.5 text-[10px] font-semibold tracking-wider text-slate-400 uppercase border-b border-slate-700/50">
-                        Users ({filterUser.length})
+                            Users ({filterUser.length})
                         </div>
 
                         <div className="max-h-60 overflow-y-auto divide-y divide-slate-700/30">
-                        {filterUser.length === 0 ? (
-                            <div className="px-4 py-6 text-center text-xs text-slate-400">
-                                Match not found "{searchQuery}"
-                            </div>
-                        ) :(
-                            filterUser.map((user) => (
-                                <button
-                                key={user.id}
-                                onClick={() => handleSelectUser(user)}
-                                className="w-full px-3 py-2.5 flex items-center gap-2.5 hover:bg-slate-700/60 transition-colors text-left cursor-pointer group"
-                                >
+                            {filterUser.length === 0 ? (
+                                <div className="px-4 py-6 text-center text-xs text-slate-400">
+                                    Match not found "{searchQuery}"
+                                </div>
+                            ) : (
+                                filterUser.map((user) => (
+                                    <button
+                                        key={user.id}
+                                        onClick={() => handleSelectUser(user)}
+                                        className="w-full px-3 py-2.5 flex items-center gap-2.5 hover:bg-slate-700/60 transition-colors text-left cursor-pointer group"
+                                    >
                                         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600 font-bold text-white text-[11px] shrink-0">
                                             {user.name?.charAt(0).toUpperCase() || "U"}
                                         </div>
@@ -112,7 +113,7 @@ export const Navbar: React.FC = () => {
                                         </span>
                                     </button>
                                 ))
-                        )}
+                            )}
                         </div>
                     </div>
                 )}
