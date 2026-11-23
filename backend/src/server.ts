@@ -12,10 +12,10 @@ import conversationRoutes from "./routes/conversation.routes";
 import messageRoutes from "./routes/message.routes";
 
 const app = express();
-const server = http.createServer(app);
+const server = http.createServer(app); //wraps the express app with http server
 
 app.use(express.json());
-app.use(cors({ origin: config.clientUrl , credentials: true }));
+app.use(cors({ origin: config.clientUrl , credentials: true })); //telling express to accept requests only from specfic frontend
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
