@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index,  OneToMany,  PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Message } from './Message';
 import { Conversation } from './Conversation';
+import { ChannelMessage } from './ChannelMessage';
 
 enum UserStatus {
     ONLINE = "Online",
@@ -68,5 +69,8 @@ export class Users {
 
     @OneToMany(() => Conversation, (conversation2) => conversation2.user2)
     conversation2!: Conversation[]
+
+    @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.user)
+    channelMessage!: ChannelMessage[]
 
 }
