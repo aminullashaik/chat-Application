@@ -4,6 +4,7 @@ import { Message } from './Message';
 import { Conversation } from './Conversation';
 import { ChannelMembers } from './ChannelMembers';
 import { ChannelMessage } from './ChannelMessage';
+import { Channel } from './Channel';
 
 enum UserStatus {
     ONLINE = "Online",
@@ -76,5 +77,8 @@ export class Users {
 
     @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.user)
     channelMessage!: ChannelMessage[]
+
+    @OneToMany(() => Channel, (channel) => channel.user)
+    channel!: Channel[]
 
 }
