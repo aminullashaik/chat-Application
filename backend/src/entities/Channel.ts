@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Entity, Column, CreateDateColumn , UpdateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, OneToMany } from "typeorm";
-import { ChannelMessage } from "./ChannelMessage";
+import { ChannelMembers } from "./ChannelMembers";
 
 @Entity()
 
@@ -17,6 +17,9 @@ export class Channel {
 
     @Column({ type: "integer"})
     createdBy!: number
+
+    @OneToMany(() => ChannelMembers, (channelMembers) => channelMembers.channel)
+    channelMembers: ChannelMembers[]
 
     @CreateDateColumn()
     createdAt! : Date
