@@ -1,7 +1,8 @@
 import "reflect-metadata";
-import { Entity, Column, CreateDateColumn , UpdateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, CreateDateColumn , UpdateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 import { ChannelMembers } from "./ChannelMembers";
 import { ChannelMessage } from "./ChannelMessage";
+import { Users } from "./User";
 
 @Entity()
 
@@ -18,6 +19,10 @@ export class Channel {
 
     @Column({ type: "integer"})
     createdBy!: number
+
+    @ManyToOne(() => Users, (user) => user.channel, { nullable: true, onDelete: "CASCADE"})
+    @JoinColumn({ name: "createdBy" })
+    user!: Users
 
     @OneToMany(() => ChannelMembers, (channelMembers) => channelMembers.channel)
     channelMembers: ChannelMembers[]

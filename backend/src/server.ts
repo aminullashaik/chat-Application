@@ -10,6 +10,7 @@ import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import conversationRoutes from "./routes/conversation.routes";
 import messageRoutes from "./routes/message.routes";
+import channelRoutes from './routes/channel.routes';
 
 const app = express();
 const server = http.createServer(app); //wraps the express app with http server
@@ -21,6 +22,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/conversations", messageRoutes);
+app.use('/api', channelRoutes);
 
 initSocketServer(server)
 
