@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index,  OneToMany, 
 import { Message } from './Message';
 import { Conversation } from './Conversation';
 import { ChannelMembers } from './ChannelMembers';
+import { ChannelMessage } from './ChannelMessage';
 
 enum UserStatus {
     ONLINE = "Online",
@@ -72,6 +73,7 @@ export class Users {
 
     @OneToMany(() => ChannelMembers, (channelMembers) => channelMembers.user)
     channelMembers!: ChannelMembers[]
+
     @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.user)
     channelMessage!: ChannelMessage[]
 

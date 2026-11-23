@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Entity, Column, CreateDateColumn , UpdateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { ChannelMembers } from "./ChannelMembers";
+import { ChannelMessage } from "./ChannelMessage";
 
 @Entity()
 
