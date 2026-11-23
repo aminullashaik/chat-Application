@@ -6,6 +6,7 @@ import { Conversation } from "./entities/Conversation";
 import { Message } from "./entities/Message";
 import { Channel } from "./entities/Channel";
 import { ChannelMessage } from "./entities/ChannelMessage";
+import { ChannelMembers } from "./entities/ChannelMembers";
 import path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
@@ -19,6 +20,6 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME,
     synchronize: true,
     logging: true,
-    entities: [ Users, Message, Conversation, Channel, ChannelMessage ]
+    entities: [ Users, Message, Conversation, Channel, ChannelMessage , ChannelMembers]
 })
 
