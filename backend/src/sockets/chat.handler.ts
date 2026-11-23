@@ -2,6 +2,8 @@ import { Socket, Server } from "socket.io";
 import { AppDataSource } from "../dataSource";
 import { Conversation } from "../entities/Conversation";
 import { Message } from "../entities/Message";
+import { ChannelMembers } from "../entities/ChannelMembers";
+import { ChannelMessage } from "../entities/ChannelMessage";
 
 const onlineUsers: Record<number, string[]> = {}
 
@@ -139,6 +141,143 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
             userId
         })
     })
+
+    socket.on("join_channel", async (data: any) => {
+
+        try {
+
+            const channelId = Number(data?.channelId);
+            const userId = socket.data.userId;
+
+            if (!Number.isInteger(channelId) || channelId <= 0) {
+                return socket.emit("error_message", {
+                    message: "Invalid channelId"
+                })
+            }
+
+            const member = await AppDataSource.getRepository(ChannelMembers).findOne({
+                where: {
+                    channel: { id: channelId },
+                    user: { id: userId }
+                }
+            })
+
+            if (!member) {
+                return socket.emit("error_message", {
+                    message: "You are not a member of this channel"
+                })
+            }
+
+            await socket.join(`channel_${channelId}`);
+
+            socket.emit("joined_channel", {
+                channelId,
+                message: "Successfully joined channel"
+            })
+
+        } catch (err: any) {
+            socket.emit("error_message", {
+                message: "Failed to join channel"
+            })
+        }
+    })
+
+    socket.on("leave_channel", async (data: any) => {
+
+        try {
+
+            const channelId = data?.channelId;
+            const userId = socket.data.userId;
+
+            if (!Number.isInteger(channelId)) {
+                socket.emit("error_message", {
+                    message: "Invalid channelId"
+                })
+            }
+
+            const member = await AppDataSource.getRepository(ChannelMembers).findOne({
+                where: {
+                    channel: { id: channelId },
+                    user: { id: userId }
+                }
+            })
+
+            if (!member) {
+                socket.emit("error_message", {
+                    message: "You are not part of this channel"
+                })
+            }
+
+            await socket.leave(`channel_${channelId}`);
+
+            socket.emit("left_channel", {
+                channelId,
+                message: "Successfully left the channel"
+            })
+
+        } catch (err: any) {
+            socket.emit("error_message", {
+                message: "Failed to leave channel"
+            })
+        }
+    })
+
+    socket.on("send_channel_message", async (data: unknown) => {
+        try {
+            
+            const userId = Number(socket.data?.user.id);
+            if (!Number.isInteger(userId) || userId <= 0) {
+                return socket.emit("error_message", { message: "Unauthorized user" });
+            }
+
+            const parsedData = typeof data === "string" ? JSON.parse(data) : (data as any);
+            const channelId = Number(parsedData?.channelId);
+            const content = typeof parsedData?.content === "string" ? parsedData.content.trim() : "";
+
+            if (!Number.isInteger(channelId) || channelId <= 0 || !content) {
+                return socket.emit("error_message", {
+                    message: "Invalid message data",
+                });
+            }
+
+            const member = await AppDataSource.getRepository(ChannelMembers).findOne({
+                where: {
+                    channel: { id: channelId },
+                    user: { id: userId },
+                },
+            });
+
+            if (!member) {
+                return socket.emit("error_message", {
+                    message: "You are not a member of this channel",
+                });
+            }
+
+            const messageRepo = AppDataSource.getRepository(ChannelMessage);
+
+            const savedMessage = await messageRepo.save(
+                messageRepo.create({
+                    content,
+                    channelId, // Explicitly set both FK ID and relation if both exist on entity
+                    senderId: userId,
+                })
+            );
+
+            io.to(`channel_${channelId}`).emit("receive_channel_message", {
+                id: savedMessage.id,
+                channelId,
+                senderId: userId,
+                content: savedMessage.content,
+                createdAt: savedMessage.createdAt,
+            });
+
+        } catch (err: unknown) {
+            console.error("send_channel_message error:", err);
+            socket.emit("error_message", {
+                message: "Failed to send channel message",
+            });
+        }
+    });
 
     socket.on("disconnect", () => {
         const userSockets = onlineUsers[userId];
