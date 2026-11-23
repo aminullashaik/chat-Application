@@ -8,7 +8,7 @@ import { Users } from "./User";
 export class ChannelMembers{
     
     @PrimaryGeneratedColumn()
-    Id! : number
+    id! : number
 
     @ManyToOne(
         () => Channel,
