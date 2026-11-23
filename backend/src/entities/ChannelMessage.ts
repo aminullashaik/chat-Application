@@ -10,10 +10,10 @@ export class ChannelMessage {
     @PrimaryGeneratedColumn()
     id!: number
 
-    @Column({ type: "integer"})
+    @Column({type:"integer"})
     channelId!: number
 
-    @Column({ type: "integer"})
+    @Column({type: "integer"})
     senderId!: number
 
     @ManyToOne(() => Channel, (channel) => channel.channelMessage, {nullable: true, onDelete:"CASCADE"})

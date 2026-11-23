@@ -1,19 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import ChannelSidebar from "@/components/ChannelSidebar";
-
 import WorkspaceSidebar from "@/components/MiniSidebar";
 import ChatArea from "@/components/ChatArea";
 import { connectSocket } from "@/services/socketServices";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
 import { setOnlineUsers, updateUserStatus } from "@/store/slice/chat.slice";
+import type { Channel } from "@/types/channelTypes";
 
 export default function HomePage() {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const token = sessionStorage.getItem("token");
+
+    const selectedUser = useSelector((state: RootState) => state.chat.selectedUser);    const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
     useEffect(() => {
         if (!token) {
             navigate("/login");
@@ -44,8 +46,14 @@ export default function HomePage() {
             <div className="flex flex-1 overflow-hidden">
             <div className="flex w-fit overflow-hidden">
             <WorkspaceSidebar />
-            <ChannelSidebar />
+            <ChannelSidebar
+            selectedChannel={selectedChannel}
+            onSelectChannel={(ch) => {
+              setSelectedChannel(ch);
+            }}
+          />
             </div>
+            
             <ChatArea/>
         </div>
         </div>
