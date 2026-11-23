@@ -13,7 +13,7 @@ import {
 export default function ChannelSidebar() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const currentUser = useSelector((state: RootState) => state.auth.user); //me for top
 
   const { users = [] } = useSelector((state: RootState) => state.users || {});
 
