@@ -30,4 +30,7 @@ export class Channel {
     @DeleteDateColumn({ type: "timestamp", nullable: true})
     deletedAt!: Date
 
+    @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.channel)
+    channelMessage!: ChannelMessage[]
+
 }

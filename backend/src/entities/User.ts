@@ -72,5 +72,7 @@ export class Users {
 
     @OneToMany(() => ChannelMembers, (channelMembers) => channelMembers.user)
     channelMembers!: ChannelMembers[]
+    @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.user)
+    channelMessage!: ChannelMessage[]
 
 }
