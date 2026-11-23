@@ -15,12 +15,12 @@ export default function ChatArea() {
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [isTyping, setIsTyping] = useState(false);
 
-    //logged in user for authslice
+    //logged in user for authslice for left right bubble
     const currentUser = useSelector((state: RootState) =>
         state.auth.user
     );
 
-    //active chat
+    //active chat 
     const { selectedUser, conversationId, messages, loadingMessages } = useSelector(
         (state: RootState) => state.chat
     );
@@ -29,6 +29,7 @@ export default function ChatArea() {
 
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    //move to other char
     useEffect(() => {
         if (!currentUser?.id || !conversationId) return;
         const socket = getSocket();

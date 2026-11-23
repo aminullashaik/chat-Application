@@ -12,7 +12,7 @@ import { setOnlineUsers, updateUserStatus } from "@/store/slice/chat.slice";
 
 export default function HomePage() {
     const navigate = useNavigate();
-        const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
     const token = sessionStorage.getItem("token");
     useEffect(() => {
         if (!token) {

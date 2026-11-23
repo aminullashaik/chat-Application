@@ -18,7 +18,7 @@ export const fetchMessages = createAsyncThunk(
     async(receiverId: number, {rejectWithValue}) => {
         try{
             const newConv = await api.post(`/conversations/direct/${receiverId}`);
-            const convId = newConv.data?.data?.conversation.id;
+            const convId = newConv.data?.data?.conversation?.id;
 
             const msgResponse = await api.get(`/conversations/${convId}/messages`);
             const msgList = msgResponse.data?.data || [];
@@ -27,7 +27,7 @@ export const fetchMessages = createAsyncThunk(
                 messages: msgList,
             }
         } catch (err: any){
-            return rejectWithValue(err.response?.data?.message || "Faled to fecth the messages");
+            return rejectWithValue(err.response?.data?.message || "Failed to fecth the messages");
         }
     }
 );
@@ -40,6 +40,7 @@ export const chatSlice = createSlice({
             state.selectedUser = action.payload;
             state.conversationId = null;
             state.messages = [];
+            state.error = null;
         },
         appendMessage: (state, action: PayloadAction<Message>) => {
             const exists = state.messages.some((m) => m.id === action.payload.id);
@@ -54,11 +55,11 @@ export const chatSlice = createSlice({
             const { userId, isOnline } = action.payload;
             const targetId = Number(userId);
             if (isOnline) {
-                if (!state.onlineUserIds.includes(userId)) {
+                if (!state.onlineUserIds.includes(targetId)) {
                     state.onlineUserIds.push(targetId);
                 }
             } else {
-                state.onlineUserIds = state.onlineUserIds.filter((id) => Number(id) !== userId);
+                state.onlineUserIds = state.onlineUserIds.filter((id) => Number(id) !== targetId);
             }
         },
 },
