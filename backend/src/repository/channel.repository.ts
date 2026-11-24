@@ -60,7 +60,7 @@ export const getChannelById = async (channelId: number) => {
 
     return await channelRepository.findOne({
         where: { id: channelId },
-        relations: ['user'],
+        relations: ['user', 'channelMembers', 'channelMembers.user'],
         select: {
             id: true,
             name: true,

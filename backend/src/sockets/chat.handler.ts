@@ -147,7 +147,7 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
         try {
 
             const channelId = Number(data?.channelId);
-            const userId = socket.data.userId;
+            const userId = socket.data.user?.id;
 
             if (!Number.isInteger(channelId) || channelId <= 0) {
                 return socket.emit("error_message", {
@@ -187,7 +187,7 @@ export const registerChatHandler = (io: Server, socket: Socket) => {
         try {
 
             const channelId = data?.channelId;
-            const userId = socket.data.userId;
+            const userId = socket.data.user?.id
 
             if (!Number.isInteger(channelId)) {
                 socket.emit("error_message", {
