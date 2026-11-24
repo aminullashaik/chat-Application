@@ -60,7 +60,7 @@ export default function CreateChannel({ isOpen, onClose, onCreate} : CreateChann
             description: description.trim(),
             memberIds: selectedMemberIds,
         });
-        toast.message("Channel created Successfully");
+        // toast.message("Channel created Successfully");
 
         setName("");
         setDescription("");

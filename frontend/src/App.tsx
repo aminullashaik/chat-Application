@@ -2,7 +2,7 @@ import type React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Signup from "./pages/Signup";
 import LoginPage from "./pages/Login";
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/homePage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import { UserPage } from "./pages/UserPage";
 import { Toaster} from "sonner";

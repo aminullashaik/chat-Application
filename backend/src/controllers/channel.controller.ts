@@ -18,7 +18,7 @@ export const createAndSaveChannel = async (
             })
         }
 
-        if (!name || !description) {
+        if (!name) {
             return res.status(400).json({
                 message: "Required fields are missing"
             })

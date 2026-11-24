@@ -7,20 +7,12 @@ import { setSelectedUser, fetchMessages } from "@/store/slice/chat.slice";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown } from "lucide-react";
 
-// 1. IMPORT YOUR CHANNELS COMPONENTS & TYPES
 import CreateChannel from "@/components/channels/CreateChannel";
-import type { Channel, CreateChannelPayload } from "@/types/channelTypes";
+import type { CreateChannelPayload } from "@/types/channelTypes";
 import ChannelList from "./channels/ChannelList";
+import { createChannelThunk, fetchChannels, setSelectedChannel } from "@/store/slice/channel.slice";
 
-interface ChannelSidebarProps {
-  selectedChannel?: Channel | null;
-  onSelectChannel?: (channel: Channel) => void;
-}
-
-export default function ChannelSidebar({
-  selectedChannel,
-  onSelectChannel,
-}: ChannelSidebarProps) {
+export default function ChannelSidebar() {
   const dispatch = useDispatch<AppDispatch>();
 
   const currentUser = useSelector((state: RootState) => state.auth.user);
@@ -29,45 +21,29 @@ export default function ChannelSidebar({
     (state: RootState) => state.chat
   );
 
+  const {channels = [], selectedChannel} = useSelector(
+    (state: RootState) => state.channels
+  );
+
   const [isDmsOpen, setIsDmsOpen] = useState(true);
 
-  // 2. MODAL STATE TO OPEN / CLOSE "CREATE CHANNEL"
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  const [channels, setChannels] = useState<Channel[]>([
-  {
-    id: 1,
-    name: "task-manager",
-    description: "day to day update",
-    createdBy: "Ameen",
-    createdAt: new Date().toISOString(),
-  },
-]);
-
-
   useEffect(() => {
-    if (users.length === 0) {
       dispatch(fetchUsers());
-    }
-  }, [dispatch, users.length]);
+    dispatch(fetchChannels());
+  },[dispatch]);
 
-  // Handler when user submits CreateChannel form
-  const handleCreateChannel = (payload: CreateChannelPayload) => {
-    const newChan: Channel = {
-      id: Date.now(),
-      name: payload.name,
-      description: payload.description,
-      createdBy: currentUser?.name || "You",
-      createdAt: new Date().toISOString(),
-    };
-    setChannels((prev) => [...prev, newChan]); // Adds new channel to list!
-  onSelectChannel?.(newChan);
+  // submits CreateChannel form
+  const handleCreateChannel = async (payload: CreateChannelPayload) => {
+    //get from backend
+    await dispatch(createChannelThunk(payload));
+    setIsCreateOpen(false);
   };
 
   return (
     <div className="flex h-full w-64 flex-col bg-slate-800 text-slate-300 border-r border-slate-700 dark:bg-slate-900 dark:border-slate-800">
       
-      {/* --- WORKSPACE TITLE HEADER --- */}
+      {/*  TITLE HEADER */}
       <div className="flex h-14 items-center justify-between px-4 border-b border-slate-700/50 hover:bg-slate-700/30 cursor-pointer transition-colors">
         <div className="flex flex-col min-w-0">
           <h1 className="text-[15px] font-bold text-white truncate flex items-center gap-1.5">
@@ -83,13 +59,13 @@ export default function ChannelSidebar({
 
       {/* MAIN SCROLLABLE BODY */}
       <ScrollArea className="flex-1 px-2 pt-3">
-
+        {/* connected to redux */}
          <ChannelList
             channels={channels}
             selectedChannelId={selectedChannel?.id}
             onSelectChannel={(channel) => {
             dispatch(setSelectedUser(null));
-            onSelectChannel?.(channel);
+            dispatch(setSelectedChannel(channel));
             }}
             onOpenCreateModal={() => setIsCreateOpen(true)}
           />
@@ -118,6 +94,7 @@ export default function ChannelSidebar({
                     <button
                       key={user.id}
                       onClick={() => {
+                        dispatch(setSelectedChannel(null));
                         dispatch(setSelectedUser(user));
                         dispatch(fetchMessages(user.id));
                       }}
