@@ -17,8 +17,9 @@ export const createChannel = async (name: string, description: string, createdBy
     if (isNameExists) {
         throw new Error("Channel name already exists. Try with other name")
     }
-
-    return await createAndSaveChannel(name, description, createdBy);
+    const channel = await createAndSaveChannel(name, description, createdBy);
+    await joinChannel(channel.id, createdBy);
+    return channel;
 }
 
 export const getChannels = async () => {
