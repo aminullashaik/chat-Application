@@ -51,14 +51,14 @@ export default function ChannelMessages({
             >
               {/* Sender Avatar */}
               <div className="h-8 w-8 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
-                {msg.sender?.name?.charAt(0).toUpperCase() || "U"}
+                {msg.sender?.name?.charAt(0).toUpperCase() || (msg as any).user?.name?.charAt(0).toUpperCase() || "U"}
               </div>
 
               {/* Message Bubble + Header */}
               <div className={`flex flex-col max-w-[70%] ${isMe ? "items-end" : "items-start"}`}>
                 <div className="flex items-center gap-2 mb-1 px-1">
                   <span className="text-xs font-semibold text-slate-700">
-                    {isMe ? "You" : msg.sender?.name}
+                    {isMe ? "You" : (msg.sender?.name || (msg as any).user?.name || "Member")}
                   </span>
                   <span className="text-[10px] text-slate-400">
                     {msg.createdAt

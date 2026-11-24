@@ -26,8 +26,11 @@ export const getChannelMessages = async (channelId: number): Promise<ChannelMess
   return response.data?.data || [];
 };
 
-//join
-export const joinChannelApi = async (channelId: number): Promise<any> => {
+export const joinChannel = async (channelId: number) => {
   const response = await api.post(`/channels/${channelId}/join`);
+  return response.data?.data;
+};
+export const leaveChannel = async (channelId: number) => {
+  const response = await api.delete(`/channels/${channelId}/leave`);
   return response.data?.data;
 };
